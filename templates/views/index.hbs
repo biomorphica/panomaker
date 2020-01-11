@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title >Input Form</title>
+        <meta charset="utf8" />
+        <link rel="stylesheet" href="css/styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Racing+Sans+One&display=swap" rel="stylesheet">        
+    </head>
+    <body>
+        <div >
+          <!-- {{>header}}  -->
+        </div>
+        <div class="project_name">
+             <span class='spacing'>Author<input type="text" class='field' id="authorName"></span>
+            <span class="project_labels">Project Name <input type="text" class='field' id="projectName"> </span><br>
+        </div>
+
+        <div class="project_options">
+            <div>
+                <span><input type="checkbox" id="numbers_vis" value=true checked>numbers visible </span>
+                <span class="spacing"></span>
+                <span> <input type="checkbox" id="names_vis" value=false>names visible  <span></span>
+                <span class="spacing"></span>
+                <span> <input type="checkbox" id="num_over" value=false>num vis on rollover  <span></span>
+                <span class="spacing"></span>
+                <span> <input type="checkbox" id="names_over" value=false>name vis on rollover  <span></span>
+                <span class="spacing"></span>
+            </div>   
+                      
+            <div>
+                <span>First Pano number <input type="number" class='field' id="first_pano" value=1 min=1></span>
+                <span class="spacing"></span>
+                <span>First view target <input type="number" class='field' id="first_target" value=2 min=1></span>
+            </div>
+        </div>
+
+        <div class='pano_viewer'>Pano Viewer</div>
+
+        <div id="pano_data">
+            <!--
+            <div id="pano-0" class="pano_maker">
+                <span class='pano_title' id='pano_maker_title-0'><b>New Pano</b></span>
+                <span id='pano_message-0' class='pano_message'></span>
+                <input type='button' class='add_button' id='add_button-0' value='Add' onclick='savePano(this.id)'><br>
+
+                <span class='title_row'>Select an Image File: </span>  
+                <input type='file' name='pano' id='input_file-0' class='browse_btn' accept='.jpg, .png' onchange="duplicateCheck(this.id)"><br>            
+                
+                <input type="checkbox" class="checkbox" id="view_name_enabled-0"  onchange="viewNamesEnable(this.id)" checked/>
+                <span class='title_row'>View Name: </span><input type='text' id="view_name-0" name='viewNames' size='40' oninput="checkInput(this.id)">
+            
+                <div class='cam_position'>
+                    <input type="checkbox" class="checkbox" id="campos_enabled-0"  onchange="camPosEnable(this.id)" />
+                    <span class='title_row'>Camera Position</span>
+                    <span class='position_row'>pos x: </span><input name='posx' size='20' id='posx-0' type='number' step='0.1' oninput="checkInput(this.id)">
+                    <span class='position_row'>pos y: </span><input name='posy' size='20' id='posy-0' type='number' step='0.1' oninput="checkInput(this.id)">
+                    <span class='position_row'>pos z: </span><input name='posz' size='20' id='posz-0' type='number' step='0.1' oninput="checkInput(this.id)">
+                    <input type='button' class='delete_button' id='delete_button-0' value='Delete' onclick='deletePano(this.id)' >
+                </div>                
+            </div> -->
+        </div>
+       
+        
+
+         <!--
+        <div class="global_properties">               
+          
+        </div>  -->
+        <!--
+        <div  class="logo">
+            <span class="spacing" id="logobutton"></span> 
+            <span>Logo <input type="checkbox" id="logo_vis" value=false>visible  <span></span>
+            <span class="spacing" id="logobutton"></span> 
+            <span class="logoinput"></span>              
+        </div> 
+
+        
+       
+
+        <input type="button" value="Add Another Panorama" onClick="newPano()" class="newpano_btn">
+        <input type="button" value="Delete" onClick="deletePano()" class="delete_btn">
+        <input type="button" value="Submit" onClick="submitData()" class="submit_btn">
+       -->
+       <script src="js/app.js"></script>
+    </body>

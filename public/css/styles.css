@@ -1,0 +1,183 @@
+body { 
+    color: #333333; 
+    font-family: Arial, Helvetica, sans-serif;
+   
+    margin: 0 auto;
+    padding: 0 16px;   
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10%;
+}
+
+.pano_viewer {
+    background-color: rosybrown;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 600px;
+}
+
+.pano_maker {
+    background-color: rgb(212, 230, 215);
+    position: relative;
+}
+
+.pano_message {
+    position: absolute;
+    left: 30%;
+    color: rgb(211, 54, 14);
+    background-color: rgb(235, 253, 253);
+    font-weight: bold;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.pano_a{
+    background-color: #eeeeee;
+    width: 100%;
+}
+.pano_b{
+    background-color: #dddddd;
+    width: 100%;
+}
+.pano_title{
+    background-color: #f0cc80;
+  /*  outline: #333333;
+     outline-width: 1px;*/
+    padding: 0px 15px;
+}
+
+.title{
+    color:rgb(11, 102, 155);
+    text-align: left;
+    font-size: 150%;
+    font-family: 'Racing Sans One', cursive;
+}
+.title_row{
+    font-weight: bold;
+    /* background-color: rgba(255, 255, 255, 0.66); */
+    padding-left: 10px;
+    /* position: absolute; */
+}
+.cam_position{
+    position: relative;
+}
+.position_row{
+    padding-left: 20px;
+}
+.nav_links li a {
+    color:rgb(82, 111, 134);
+    background-color: #ebedf3;
+    padding: 5px 10px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    text-decoration: none;
+    list-style: none;
+}
+
+.nav_links li a:hover{
+    color: rgb(134, 69, 15)
+}
+
+.nav_links li {
+    display: inline-block;
+    padding: 0px 20px;
+}
+
+.project_name {
+    background-color: rgb(188, 205, 216);   
+    padding: 10px 0px;
+    width: 100%;
+}
+
+.global_properties{
+    background-color: rgb(188, 205, 216);   
+    padding: 10px 0px;
+}
+.project_labels{
+    padding: 8px 30px;
+}
+.project_options {  
+    padding: 5px 0px;
+    background: rgb(150, 197, 187); 
+    width: 100%;
+}
+.logo {  
+    padding: 5px 0px;    
+    background: rgb(212, 228, 188); 
+}
+.loadcamfile{  
+    padding: 5px 0px;    
+    background: rgb(188, 228, 221); 
+}
+.spacing{    
+    margin-left: 30px;
+    background: inherit;
+}
+
+.field:valid {
+    background: rgb(225, 243, 201);
+}
+.field:invalid {
+    background: hsla(0, 90%, 70%, 1);
+}
+
+input:invalid {
+    background: hsla(0, 90%, 70%, 1);
+}  
+input:valid {
+    background: rgb(235, 241, 217);
+}
+.delete_button{
+    font-weight: bold;
+    position: absolute;
+    right: 2px;
+    top: -4px;
+    color: #7e522d;
+    background-color: #e7dbb2;
+    border-radius: 25px;
+    padding: 2px 15px;  
+    /* margin-top: 3px;
+    margin-right: 3px; */
+    cursor: pointer;
+    display: none;
+}
+.add_button {
+    font-weight: bold;
+    float: right;
+    color: #86450f;
+    background-color: #f0c769;
+    border-radius: 25px;
+    padding: 5px 20px;
+    margin-top: 3px;
+    margin-right: 3px;
+    cursor: pointer;
+}
+.add_button:hover {
+    color: rgb(202, 48, 21);
+    background-color: rgb(235, 255, 255);
+}
+
+.browse_btn{  
+    background-color: rgb(134, 178, 180);
+    border: thin;
+    border-style: solid;
+    border-color: rgb(168, 168, 168);
+    color: rgb(0, 0, 0);
+    /* padding: 10px 24px; */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    /* margin:  4px 2px; */
+    cursor: pointer;
+}
+
+
+

@@ -1,0 +1,21 @@
+{
+  "name": "panomaker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "hbs": "^4.0.6",
+    "mkdirp": "^0.5.1",
+    "path": "^0.12.7",
+    "request": "^2.88.0"
+  }
+}

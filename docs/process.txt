@@ -1,0 +1,35 @@
+Create the folder structure for a node server site.
+    public
+        css img js
+    src
+        app.js
+    templates
+        partials
+        views
+            index.hbs
+
+Install npm and modules
+    express
+    mkdirp
+    path
+    request
+    hbs
+    
+
+Remake the html as hbs.
+
+Remake js files
+    When a new entry occurs, use node to generate new html.
+    
+Import json data from maxscript to populate form data.
+
+
+to do
+
+x Change Add to Commit (onchange="verifyPano" - tests all fields, and if valid, submits data )
+Delete pano button
+Test if same pano has already been used. If so, issue alert.
+verify Pano data
+
+
+
