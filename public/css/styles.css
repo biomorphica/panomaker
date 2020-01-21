@@ -64,6 +64,13 @@ header {
     padding-left: 10px;
     /* position: absolute; */
 }
+.image_thm {
+        width: 64px;
+        height: auto;
+        padding-left: 20px;
+        vertical-align: bottom;
+        
+}
 .cam_position{
     position: relative;
 }

@@ -1,4 +1,4 @@
-        /* Make input form that allows user to input
+        /* Input form that gathers 
              1) name of scene
              2) name of Author
              3) file path name
@@ -35,8 +35,9 @@
         // loadCamDiv.innerHTML ="<span class='logo'> Select a file: </span>  <input type='file' name='logofile' id='input-file' class='browse-btn' accept='.jpg, .png' ><br>  ";
         
          // ----------------------------- createPano ----------------------------
-        // Add a new Panorama Panel of input elements.
+        // Add a new bank of input elements used to create a new Panorama.
         // Creates all the html and a pano object that has references to all the elements and their values.
+        // Called from savePano() when a new pano button is clicked.
         function createPano(panoId) {
             // console.log('createPano');
             let pId = extractId(panoId)
@@ -86,8 +87,14 @@
             imageInput.setAttribute('class', 'browse_btn')
             imageInput.setAttribute('accept', '.jpg, .png')
             imageInput.setAttribute('onchange', 'duplicateCheck(this.id)')
+            imageInput.setAttribute('oninput', 'displayThumbnail(this)')
             fileDiv.appendChild(imageInput)
-           
+            // image file thumbnail
+            let imageThumb = document.createElement('img')
+            imageThumb.setAttribute('id', 'image_thm-'+pId)
+            imageThumb.setAttribute('class', 'image_thm')
+            fileDiv.appendChild(imageThumb)
+
             // View Name
             let nameDiv = divCreator('name_div', mainDiv);
             let paneSize = 40;
@@ -368,6 +375,7 @@
                     
                     // Create the json object that contains all the pano data.
                     // Submit the json to the server. 
+                    submitData()
 
                     // Change some of the HTML of this newly saved pano, so it appears as a saved panel.
                     gPanos[curPanoId].elements.addButton.value = "Save"
@@ -451,6 +459,25 @@
                     }
                 }
             }
+        }
+        // ----------------------------- displayThumbnail ----------------------------
+        // 
+        function displayThumbnail(el){
+            console.log('displayThumbnail', el)
+            const file = el.files[0]
+            // console.log(file)
+            const id = el.id.match((/\d+/))[0]
+            // console.log(id)
+            const imgThmEl = document.querySelector('#image_thm-'+id)
+            const reader = new FileReader()
+            reader.onload = function(event){
+                imgThmEl.src = event.target.result
+            }
+            reader.readAsDataURL(file)
+            console.log(imgThmEl)
+            // if (imgThmEl){
+            //     imgThmEl.setAttribute('src', el.value)
+            // }
         }
        // ----------------------------- populatePanoValues ----------------------------
        // Populate the pano.values with data from all the html elements
@@ -593,13 +620,7 @@
             //         projectData[key].value = file;
             //     }
                
-            // }   
-            // console.log('projectData', projectData);     
-            // If project fields are not valid, throw error and exit submission.
-            if (!projectFieldsValid){
-                alert('Global Fields are empty.');
-                return;
-            }
+           
 
             // Retrieve data from pano html fields and populate gPanos object.
             populatePanoValues(); 
@@ -647,8 +668,6 @@
                 return;
             }
         }
-
-      
 
         // ----------------------------- divCreator ----------------------------
         // creates new divs appended to the body tag.

@@ -1,35 +1,21 @@
-Create the folder structure for a node server site.
-    public
-        css img js
-    src
-        app.js
-    templates
-        partials
-        views
-            index.hbs
+  
 
-Install npm and modules
-    express
-    mkdirp
-    path
-    request
-    hbs
-    
-
-Remake the html as hbs.
-
-Remake js files
-    When a new entry occurs, use node to generate new html.
-    
-Import json data from maxscript to populate form data.
 
 
 to do
 
 x Change Add to Commit (onchange="verifyPano" - tests all fields, and if valid, submits data )
-Delete pano button
-Test if same pano has already been used. If so, issue alert.
+x Delete pano button
+x Test if same pano has already been used. If so, issue alert.
 verify Pano data
 
 
+Import json data from maxscript to populate form data.
+
+Logo implentation
+
+x Image thumbnails inside html UI
+
+export json data to server.
+create aframe scene when json package is received. Populate with incoming panos.
 
