@@ -5,16 +5,22 @@
         <meta charset="utf8" />
         <link rel="stylesheet" href="css/styles.css">
         <link href="https://fonts.googleapis.com/css?family=Racing+Sans+One&display=swap" rel="stylesheet">        
+       
     </head>
     <body>
+        <div class="title">Spatial Panorama Maker</div>
         <div >
           <!-- {{>header}}  -->
         </div>
         <div class="project_name">
-             <span class='spacing'>Author<input type="text" class='field' id="authorName"></span>
-            <span class="project_labels">Project Name <input type="text" class='field' id="projectName"> </span><br>
+            <span>Author: <input type="text" class='field' id="authorName"></span>
+            <span class="project_labels">Project Name: <input type="text" class='field' id="projectName"> </span><br>
+            <span><input type="file" name="import_button" class="import_button" accept=".json, .txt" 
+                id="import_button" value="Import Camera Data" onchange="importCamData(this.files)"/>
+            <label for="import_button">Import Camera Data</label></span>
+            <span><input type="button"  class="submit_disabled"  id="submit_button" value="Make Panos" disabled=true onclick="submitData()"></span>
         </div>
-
+<!--
         <div class="project_options">
             <div>
                 <span><input type="checkbox" id="numbers_vis" value=true checked>numbers visible </span>
@@ -33,8 +39,8 @@
                 <span>First view target <input type="number" class='field' id="first_target" value=2 min=1></span>
             </div>
         </div>
-
-        <div class='pano_viewer'>Pano Viewer</div>
+-->
+       
 
         <div id="pano_data">
             <!--

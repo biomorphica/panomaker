@@ -210,6 +210,8 @@
             gPanos.push(pano);
             // console.log(pano);
             checkInput(newPanoId)
+            
+            
         }   
         // ----------------------------  viewNamesEnable ------------------------ 
         // Checkbox enables (or disables) the View Name field
@@ -375,7 +377,7 @@
                     
                     // Create the json object that contains all the pano data.
                     // Submit the json to the server. 
-                    submitData()
+                    // submitData()
 
                     // Change some of the HTML of this newly saved pano, so it appears as a saved panel.
                     gPanos[curPanoId].elements.addButton.value = "Save"
@@ -396,12 +398,19 @@
                     
                     // Create a new pano panel,  html set and pano object populated with elements refs and values.
                     createPano(newPanoId)
+
+                    // enable Make Panos button
+                    const mpb = document.querySelector('#submit_button')
+                    console.log(mpb.getAttribute('disabled'))
+                    mpb.setAttribute('class', 'submit_button')
+                    mpb.disabled = false
+                    console.log(mpb)
+
                 } else { // Save Pano edits
                     // Set the Save button back to gray
                     gPanos[pId].elements.addButton.style.color = '#757575'
                     gPanos[pId].elements.addButton.style.backgroundColor = '#e2e2e2'
                     // Save edited Pano Data
-
 
                 }
 
@@ -417,10 +426,224 @@
 
             }        
         }
+        // ----------------------------- loadPano ----------------------------
+        // Creates the html elements for a new pano, that was loaded from file
+        function loadPano(panoObjects){
+            console.log('loadPano', panoObjects)
+            const filePath = panoObjects.panoPath 
+            const parentDiv = document.querySelector('#pano_data')
+            let prevDiv, mainDiv
+            let newPanoId = gPanos.length, pId, divId
+            let prevId = 'pano-'+(newPanoId-1).toString()
+            console.log(panoObjects.data)
+            const panos = Object.values(panoObjects.data)
+            console.log('panos', panos, typeof panos, panos.length)
+            const oldPanosLength = gPanos.length-1
+            Object.keys(panos).forEach(key => {    
+                // debugger           
+                let pano = panos[key]
+                console.log('pano: ', pano)
+                // console.log('createPano');
+                pId = Number(pano.id)
+                newPanoId = (oldPanosLength + pId)// 
+                if (pId == 1){ // For the first one, populate the values in the New Pano Elements
+                   
+                    let newPano = gPanos[gPanos.length-1]
+                    newPano.elements.main.setAttribute('class', 'pano_a');
+                    newPano.elements.message.innerHTML = filePath
+                    newPano.elements.title.innerHTML = "<b>Pano "+newPanoId.toString()+"</b>"
+                    newPano.elements.addButton.value = "Save"
+                    newPano.elements.viewName.setAttribute('value', pano.name)
+                    newPano.elements.inputFile.setAttribute('value', pano.file)
+                    newPano.elements.posx.setAttribute('value', pano.x) 
+                    newPano.elements.posy.setAttribute('value', pano.y) 
+                    newPano.elements.posz.setAttribute('value', pano.z)
+                    newPano.elements.inputFile.setAttribute('onchange', 'input_file-'+newPanoId)
+                } else {
+                   
+                    // Create a new Div, that will contain all the input fields.
+                    divId = 'pano-'+(newPanoId)               
+                    prevId = 'pano-'+(newPanoId-1).toString()               
+                    prevDiv = document.querySelector('#'+prevId)
+                    // mainDiv = divInserter( divId, parentDiv, prevDiv);
+                    mainDiv = divCreator(pId, parentDiv)
+                    if (Number(newPanoId)%2 == 0){
+                        mainDiv.setAttribute('class', 'pano_b');
+                    } else {
+                        mainDiv.setAttribute('class', 'pano_a');
+                    }
+                
+                    // Pano number           
+                    let panoTitle = document.createElement('span')
+                    panoTitle.setAttribute('id', 'pano_maker_title-'+newPanoId)
+                    panoTitle.setAttribute('class','pano_title')
+                    panoTitle.innerHTML = "<b>Pano "+newPanoId+"</b>" 
+                    mainDiv.appendChild(panoTitle)              
+
+                    //  Message Panel
+                    let message = document.createElement('span')
+                    message.setAttribute('id', 'pano_message-'+newPanoId)
+                    message.setAttribute('class', 'pano_message')
+                    message.innerHTML = filePath
+                    mainDiv.appendChild(message)
+                    
+                    // Save Button
+                    let addButton = document.createElement('input')
+                    addButton.setAttribute('type', 'button')
+                    addButton.setAttribute('id', 'add_button-'+newPanoId)
+                    addButton.setAttribute('class', 'save_button')
+                    addButton.setAttribute('value', 'Save' )
+                    addButton.setAttribute('onclick', 'savePano(this.id)' )
+                    mainDiv.appendChild(addButton)
+                        
+                    // Select a file
+                    let fileDiv = divCreator('file_div', mainDiv);
+                    let selFile = document.createElement('span')
+                    fileDiv.appendChild(selFile)
+                    selFile.innerHTML = '<b>Select an Image File: </b>'
+                    selFile.setAttribute('class', 'title_row')
+                    // input file
+                    let id = 'input_file-'+newPanoId  
+                    let imageInput = document.createElement('input')   
+                    imageInput.setAttribute('type', 'file')
+                    imageInput.setAttribute('name', 'pano'+newPanoId)
+                    imageInput.setAttribute('id', 'input_file-'+newPanoId)
+                    imageInput.setAttribute('class', 'browse_btn')
+                    imageInput.setAttribute('accept', '.jpg, .png')
+                    imageInput.setAttribute('onchange', 'duplicateCheck(this.id)')
+                    imageInput.setAttribute('oninput', 'displayThumbnail(this)')
+                    fileDiv.appendChild(imageInput)
+                    // image file thumbnail
+                    let imageThumb = document.createElement('img')
+                    imageThumb.setAttribute('id', 'image_thm-'+newPanoId)
+                    imageThumb.setAttribute('class', 'image_thm')
+                    fileDiv.appendChild(imageThumb)
+
+                    // View Name
+                    let nameDiv = divCreator('name_div', mainDiv);
+                    let paneSize = 40;
+                    // checkbox enable View Names
+                    let enableViewName = document.createElement('input')
+                    enableViewName.setAttribute('type', "checkbox")
+                    enableViewName.setAttribute('class', 'checkbox')
+                    enableViewName.setAttribute('id', 'view_name_enabled-'+newPanoId)
+                    enableViewName.setAttribute('checked', 'true')
+                    enableViewName.setAttribute('onclick', 'viewNamesEnable(this.id)')
+                    nameDiv.appendChild(enableViewName)
+                    // Label
+                    let viewNameLabel = document.createElement('span')
+                    viewNameLabel.setAttribute('class', 'title_row')
+                    viewNameLabel.innerHTML = 'View Name:'
+                    nameDiv.appendChild(viewNameLabel)
+                    // Input
+                    let viewNameInput = document.createElement('input')
+                    viewNameInput.setAttribute('type', 'text')
+                    viewNameInput.setAttribute('size', paneSize)
+                    viewNameInput.setAttribute('class', 'title_row')
+                    viewNameInput.setAttribute('id', 'view_name-'+newPanoId)
+                    viewNameInput.setAttribute('value', pano.name)
+                    viewNameInput.setAttribute('onchange', 'checkInput(this.id)')
+                    viewNameInput.setAttribute('oninput', 'duplicateCheck(this.id)')
+                    nameDiv.appendChild(viewNameInput)
+                
+                    // Camera Position
+                    let camposDiv = divCreator('campos_div', mainDiv);
+                    camposDiv.setAttribute('class', 'cam_position')
+                    // console.log('camposDiv ',camposDiv)
+                    paneSize = 20;
+                    // checkbox enable View Names
+                    let enableCamPos = document.createElement('input')
+                    enableCamPos.setAttribute('type', "checkbox")
+                    enableCamPos.setAttribute('class', 'checkbox')
+                    enableCamPos.setAttribute('id', 'cam_pos_enabled-'+newPanoId)
+                    enableCamPos.setAttribute('checked', 'true')
+                    enableCamPos.setAttribute('onclick', 'camPosEnable(this.id)')
+                    camposDiv.appendChild(enableCamPos)
+                    // Title
+                    let camPosTitle = document.createElement('span')
+                    camPosTitle.innerHTML = "Camera Position"
+                    camPosTitle.setAttribute('class', 'title_row')
+                    camposDiv.appendChild(camPosTitle)
+                    // pos x label
+                    let posxLabel = document.createElement('span')
+                    posxLabel.setAttribute('class', 'position_row')
+                    posxLabel.innerHTML = 'pos x:'
+                    camposDiv.appendChild(posxLabel)
+                    // pos x Input
+                    let posxInput = document.createElement('input')
+                    posxInput.setAttribute('type', 'number')
+                    posxInput.setAttribute('step', '0.1')
+                    posxInput.setAttribute('size', paneSize)
+                    posxInput.setAttribute('id', 'posx-'+newPanoId)
+                    posxInput.setAttribute('value', pano.x)
+                    posxInput.setAttribute('onchange', 'checkInput(this.id)')
+                    camposDiv.appendChild(posxInput)
+                    // pos y label
+                    let posyLabel = document.createElement('span')
+                    posyLabel.setAttribute('class', 'position_row')
+                    posyLabel.innerHTML = 'pos y:'
+                    camposDiv.appendChild(posyLabel)
+                    // pos y Input
+                    let posyInput = document.createElement('input')
+                    posyInput.setAttribute('type', 'number')
+                    posyInput.setAttribute('step', '0.1')
+                    posyInput.setAttribute('size', paneSize)
+                    posyInput.setAttribute('id', 'posy-'+newPanoId)
+                    posyInput.setAttribute('value', pano.y)
+                    posyInput.setAttribute('onchange', 'checkInput(this.id)')
+                    camposDiv.appendChild(posyInput)
+                    // pos z label
+                    let poszLabel = document.createElement('span')
+                    poszLabel.setAttribute('class', 'position_row')
+                    poszLabel.innerHTML = 'pos z:'
+                    camposDiv.appendChild(poszLabel)
+                    // pos z Input
+                    let poszInput = document.createElement('input')
+                    poszInput.setAttribute('type', 'number')
+                    poszInput.setAttribute('step', '0.1')
+                    poszInput.setAttribute('size', paneSize)
+                    poszInput.setAttribute('id', 'posz-'+newPanoId)
+                    poszInput.setAttribute('value', pano.z)
+                    poszInput.setAttribute('onchange', 'checkInput(this.id)')
+                    camposDiv.appendChild(poszInput)
+
+                    // Delete Button
+                    let deleteButton = document.createElement('input')
+                    deleteButton.setAttribute('type', 'button')
+                    deleteButton.setAttribute('id', 'delete_button-'+newPanoId)
+                    deleteButton.setAttribute('class', 'delete_button')
+                    deleteButton.setAttribute('value', 'Delete' )
+                    deleteButton.setAttribute('onclick', 'deletePano(this.id)' )
+                    camposDiv.appendChild(deleteButton)
+               
+                    // pano object {elements, values}
+                    let newPano = {
+                        elements: {  
+                            main: mainDiv, 
+                            title: panoTitle,   
+                            message: message,       
+                            addButton: addButton,
+                            deleteButton: deleteButton,
+                            inputFile: imageInput,
+                            viewName: viewNameInput,
+                            viewNameEnabled: enableViewName,                   
+                            camPosEnbabled: enableCamPos, 
+                            posx: posxInput,
+                            posy: posyInput,
+                            posz: poszInput
+                        },
+                        values:{}
+                    }
+
+                    gPanos.push(newPano);
+                }
+            })
+        }
         // ----------------------------- duplicateCheck ----------------------------
+        // Checks all the previously made panos to see if new pano is a duplicate.
         function duplicateCheck(elId){
             console.log('duplicateCheck ', elId)
-            //debugger
+            debugger
             // Get name of ID
             let elType = elId.match(/\w+/i)[0]
             // console.log('element type ', elType)
@@ -432,7 +655,7 @@
             if (gPanos.length > 1){
                 for (let i=0; i<gPanos.length-1; i++){
                     if(elType == 'input_file'){                       
-                        if (gPanos[i].elements.inputFile.value == elemVal && i !== Number(pId)){
+                        if ((gPanos[i].elements.inputFile.value == elemVal) && (i+1 !== Number(pId))){
                             // console.log('Your Image File choice is the same as pano '+ (i+1).toString() )
                             messageEl.innerHTML = 'Your image file choice is the same as pano '+ (i+1).toString()
                             elemToTest.style.borderColor =  '#ff4400'
@@ -445,7 +668,7 @@
                         }
                     } else if (elType == 'view_name'){
                         console.log('view_name ', gPanos[i].elements.viewName.value, elemVal)
-                        if (gPanos[i].elements.viewName.value == elemVal && i !== Number(pId)){
+                        if ( (gPanos[i].elements.viewName.value == elemVal) && (i+1 !== Number(pId)) ){
                             // console.log('Your View Name choice is the same in pano '+ (i+1).toString() )
                             messageEl.innerHTML = 'Your View Name  choice is the same as pano '+ (i+1).toString()
                             elemToTest.style.borderColor =  '#ff4400'
@@ -475,9 +698,9 @@
             }
             reader.readAsDataURL(file)
             console.log(imgThmEl)
-            // if (imgThmEl){
-            //     imgThmEl.setAttribute('src', el.value)
-            // }
+            // Clear message 
+            const messageEl = document.querySelector('#pano_message-'+id)
+            messageEl.innerHTML = ''
         }
        // ----------------------------- populatePanoValues ----------------------------
        // Populate the pano.values with data from all the html elements
@@ -518,7 +741,6 @@
                 }
             }
         }
-           
        
         // ----------------------------- deletePano ----------------------------
         let deletePano = function(panoId){
@@ -571,25 +793,25 @@
          // Check data for errors.
          // Submit verified data to server.
          let submitData = function() {
-            // console.log('submitData');
+            console.log('submitData');
             // object list of all the project data that will be saved to the json file.
             let projectData = {
                 projectName:{ id:"#projectName", value: document.querySelector('#projectName').value, type:"string" },
                 authorName:{ id:"#authorName", value: document.querySelector('#authorName').value, type:"string" }, 
-                bNumbersVisible:{ id:"#numbers_vis", value: document.querySelector('#numbers_vis').click, type:"boolean" },
-                bNamesVisible:{ id:"#names_vis", value: document.querySelector('#names_vis').click, type:"boolean" }, 
-                bNumVisRollover:{ id:"#num_over", value: document.querySelector('#num_over').click, type:"boolean" } , 
-                bNamVisRollover:{ id:"#names_over", value: document.querySelector('#names_over').click, type:"boolean" },
-                firstPanoNum:{ id:"#first_pano", value: document.querySelector('#first_pano').value, type: "number" }, 
-                firstTargetNum:{ id:"#first_target", value: document.querySelector('#first_target').value, type: "number" }, 
-                bThumbnailsVisible:{ id:"#thumbnails_vis", value: document.querySelector('#thumbnails_vis').click, type: "boolean" }, 
-                bThumbNamesVisible:{ id:"#thm_names_vis", value: document.querySelector('#thm_names_vis').click, type: "boolean" }, 
-                bThumbNumbersVisible:{ id:"#thm_numbers_vis", value: document.querySelector('#thm_numbers_vis').click, type: "boolean" },
-                bLogoVisible:{ id:"#logo_vis", value: document.querySelector('#logo_vis').click, type:"boolean" }, 
-                logoFile:{ id:"#logo_input_file", value: document.querySelector('#logo_vis').value, type: "file"},
-                bLogoFixed:{ id:"#logo_fixed", value: document.querySelector('#logo_fixed').click, type:"boolean" }, 
-                logoDuration:{ id:"#logo_duration", value: document.querySelector('#logo_duration').value, type:"number" }, 
-                bUseCamPostionData:{ id:"#use_cam_pos_data", value: document.querySelector('#use_cam_pos_data').click, type:"boolean" }
+                // bNumbersVisible:{ id:"#numbers_vis", value: document.querySelector('#numbers_vis').click, type:"boolean" },
+                // bNamesVisible:{ id:"#names_vis", value: document.querySelector('#names_vis').click, type:"boolean" }, 
+                // bNumVisRollover:{ id:"#num_over", value: document.querySelector('#num_over').click, type:"boolean" } , 
+                // bNamVisRollover:{ id:"#names_over", value: document.querySelector('#names_over').click, type:"boolean" },
+                // firstPanoNum:{ id:"#first_pano", value: document.querySelector('#first_pano').value, type: "number" }, 
+                // firstTargetNum:{ id:"#first_target", value: document.querySelector('#first_target').value, type: "number" }, 
+                // bThumbnailsVisible:{ id:"#thumbnails_vis", value: document.querySelector('#thumbnails_vis').click, type: "boolean" }, 
+                // bThumbNamesVisible:{ id:"#thm_names_vis", value: document.querySelector('#thm_names_vis').click, type: "boolean" }, 
+                // bThumbNumbersVisible:{ id:"#thm_numbers_vis", value: document.querySelector('#thm_numbers_vis').click, type: "boolean" },
+                // bLogoVisible:{ id:"#logo_vis", value: document.querySelector('#logo_vis').click, type:"boolean" }, 
+                // logoFile:{ id:"#logo_input_file", value: document.querySelector('#logo_vis').value, type: "file"},
+                // bLogoFixed:{ id:"#logo_fixed", value: document.querySelector('#logo_fixed').click, type:"boolean" }, 
+                // logoDuration:{ id:"#logo_duration", value: document.querySelector('#logo_duration').value, type:"number" }, 
+                // bUseCamPostionData:{ id:"#use_cam_pos_data", value: document.querySelector('#use_cam_pos_data').click, type:"boolean" }
             };
 
 
@@ -629,6 +851,8 @@
             // let values = checkPanoValues();
             // values = {};
 
+            // debugger
+
             // Add the project data.
             let projectDataObject = {};
             projectDataKeys = Object.keys(projectData);
@@ -646,14 +870,14 @@
                 
                 // Add the pano data.               
                 panoFinal['data'] = { panos: values, project: projectDataObject };
-                // console.log('panoFinal', panoFinal);
+                 console.log('panoFinal', panoFinal);
                 // prepare to send json to server
                 const options = {
                     method: 'POST',
                     headers:{ 'Content_Type': 'application/json' },
                     body: JSON.stringify(panoFinal)
                 };
-                //  console.log('options', options);
+                console.log('options', options);
                 // submit data to the server.               
                 async function getApi(){ // async function uses await for response.
                     console.log('getApi');
@@ -668,24 +892,49 @@
                 return;
             }
         }
+        // ----------------------------- importCamData ----------------------------
+        function importCamData(files){
+            console.log('import camera data ', files.length, files)
 
+            if (window.File && window.FileReader && window.FileList && window.Blob){
+                console.log('File Reader available')
+                let jsonFile = files[0]
+                console.log('jsonFile', jsonFile)
+                const reader = new FileReader()
+              
+                reader.addEventListener('load', function(){  
+                    const camObjects = JSON.parse(reader.result)                  
+                    console.log('loaded', camObjects)
+                    const filePath = camObjects.panoPath
+                    console.log('filePath ', filePath)
+                   
+                    // populate the panos
+                    loadPano(camObjects)          
+
+                })
+                reader.readAsText(jsonFile) 
+            } else {
+                alert(' Cannot get save file because your browser does not support File Reader API.')
+            }
+        }
+       
         // ----------------------------- divCreator ----------------------------
         // creates new divs appended to the body tag.
-        let divCreator = function(id, parent){
+        function divCreator(id, parent){
             // console.log('divCreator', id, parent);
-            let newElement = document.createElement('div');
-            let newNode = parent.appendChild(newElement);
-            newNode.setAttribute('id', id);
-            return newNode;
+            let newDiv = document.createElement('div');
+            let newElement = parent.appendChild(newDiv);
+            newElement.setAttribute('id', id);
+            return newElement;
         }
          // ----------------------------- divInserter ----------------------------
         // creates new divs appended to the body tag.
         let divInserter = function(id, parent, prevDiv){
             // console.log('divInserter', id, parent, prevDiv);
-            let newElement = document.createElement('div');
-            let newNode = parent.insertBefore(newElement, prevDiv);
-            newNode.setAttribute('id', id);
-            return newNode;
+            let newDiv = document.createElement('div');
+            let newElement = parent.insertBefore(newDiv, prevDiv);
+            newElement.setAttribute('id', id);
+            return newElement;
         }
           // ----------------------------- extractId ----------------------------
         // extract the Id number at the end of the string inside panoId
@@ -696,22 +945,16 @@
             if(!pId){pId=gCurPano}
             pId = Number(pId)
             return pId
-        }    
+        } 
         
-     
-    
-    // called when checkbox "use_cam_pos_data" is checked.
-    function camPosImport(){
-        
-        console.log('camPosImport');           
-     //    console.log(document.querySelector('#use_cam_pos_data'));
-    
-    }
-
+   
     //  ----------------------------- MAIN ----------------------------    
 
       // Global Variables
       let gPanos = [];// List of all the panos to be used
       let gCurPano = 0;
       let gbvaluesValid = false; 
+    //   const reader = new FileReader()
+    //   const inputCamData = document.querySelector('#import_button')
+    //   inputCamData.addEventListener('change', imputCameraData())
     createPano(0) 

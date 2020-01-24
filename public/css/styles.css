@@ -1,7 +1,6 @@
 body { 
     color: #333333; 
-    font-family: Arial, Helvetica, sans-serif;
-   
+    font-family: Arial, Helvetica, sans-serif;   
     margin: 0 auto;
     padding: 0 16px;   
 }
@@ -54,7 +53,9 @@ header {
 
 .title{
     color:rgb(11, 102, 155);
-    text-align: left;
+    background-color: #eaf8e8;
+    text-align: center;
+    padding: 30px;
     font-size: 150%;
     font-family: 'Racing Sans One', cursive;
 }
@@ -70,6 +71,30 @@ header {
         padding-left: 20px;
         vertical-align: bottom;
         
+}
+.import_button {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.import_button + label {
+    font-size: 1em;
+    font-weight: bold;
+    color: #3a3430;
+    background-color: #d1d1d1;
+    border-radius: 25px;
+    padding: 5px 20px;
+    display: inline-block;
+}
+.import_button:focus + label,
+.import_button + label:hover{
+    background-color: #f0c769;
+}
+.import_button + label {
+    cursor: pointer;
 }
 .cam_position{
     position: relative;
@@ -98,11 +123,32 @@ header {
 }
 
 .project_name {
-    background-color: rgb(188, 205, 216);   
+    background-color: rgb(205, 234, 243);
     padding: 10px 0px;
     width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
-
+.submit_button{   
+    font-weight: bold;
+    color: #3a3430;
+    background-color: #f0c769;
+    border-radius: 25px;
+    padding: 5px 20px;
+    margin-top: 0px;
+    margin-left: auto;
+    cursor: pointer;
+}
+.submit_disabled{   
+    font-weight: 0;
+    color: #959595;
+    background-color: #cecece;
+    border-radius: 25px;
+    padding: 5px 20px;
+    margin-top: 0px;
+    margin-left: auto;
+}
 .global_properties{
     background-color: rgb(188, 205, 216);   
     padding: 10px 0px;
@@ -166,9 +212,22 @@ input:valid {
     margin-right: 3px;
     cursor: pointer;
 }
+
 .add_button:hover {
     color: rgb(202, 48, 21);
     background-color: rgb(235, 255, 255);
+}
+
+.save_button {
+    font-weight: bold;
+    float: right;
+    color: #757575;
+    background-color: #e2e2e2;
+    border-radius: 25px;
+    padding: 5px 20px;
+    margin-top: 3px;
+    margin-right: 3px;
+    cursor: pointer;
 }
 
 .browse_btn{  

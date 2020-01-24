@@ -1,9 +1,10 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+const hbs = require('hbs')
 const fs = require('fs'); // filse system libary in express
 const mkdirp = require('mkdirp');
-const hbs = require('hbs')
+
 const port = process.env.PORT || 3000
 
 // Define paths for Express config
@@ -39,6 +40,8 @@ app.get('*', (req, res) => {
 app.listen(port, () => {
     console.log('Server is up on port '+ port)
 })
+
+// Aframe scene build
 
 app.post('/api', (request, response) =>{
     console.log('request accepted. --------------------------------- ');
