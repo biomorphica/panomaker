@@ -39,12 +39,13 @@
         // Creates all the html and a pano object that has references to all the elements and their values.
         // Called from savePano() when a new pano button is clicked.
         function createPano(panoId) {
+            //debugger
             // console.log('createPano');
             let pId = extractId(panoId)
-            let newPanoId = gPanos.length
+           
             // Create a new Div, that will contain all the input fields.
             const divId = 'pano-'+(pId).toString()
-            const prevId = 'pano-'+(newPanoId-1).toString()
+            const prevId = 'pano-'+(pId-1).toString()
             const parentDiv = document.querySelector('#pano_data')
             const prevDiv = document.querySelector('#'+prevId)
             const mainDiv = divInserter( divId, parentDiv, prevDiv);
@@ -82,7 +83,7 @@
             let id = 'input_file-'+pId  
             let imageInput = document.createElement('input')   
             imageInput.setAttribute('type', 'file')
-            imageInput.setAttribute('name', 'pano'+newPanoId)
+            imageInput.setAttribute('name', 'pano'+pId)
             imageInput.setAttribute('id', 'input_file-'+pId)
             imageInput.setAttribute('class', 'browse_btn')
             imageInput.setAttribute('accept', '.jpg, .png')
@@ -199,7 +200,7 @@
                     inputFile: imageInput,
                     viewName: viewNameInput,
                     viewNameEnabled: enableViewName,                   
-                    camPosEnbabled: enableCamPos, 
+                    camPosEnabled: enableCamPos, 
                     posx: posxInput,
                     posy: posyInput,
                     posz: poszInput
@@ -209,7 +210,7 @@
 
             gPanos.push(pano);
             // console.log(pano);
-            checkInput(newPanoId)
+            checkInput(gPanos.length-1)
             
             
         }   
@@ -236,7 +237,7 @@
             if(!id) {id =  event.srcElement.id}
             let cId =  extractId(id)
             // console.log('cId', cId)
-            if (gPanos[cId].elements.camPosEnbabled.checked){
+            if (gPanos[cId].elements.camPosEnabled.checked){
                 // console.log('enable camera pos')
                 gPanos[cId].elements.posx.disabled = false
                 gPanos[cId].elements.posy.disabled = false
@@ -256,7 +257,6 @@
         function checkInput(panoId) {
             let pId = extractId(panoId)
         //   console.log('checkInput ', pId)
-        //   debugger
             let val = getFormValidation(pId) 
             let clear = false // Does not flag invalid fields (outline in red), only clears valid fields from being flagged.          
             flagInvalidFields(val, clear)
@@ -281,7 +281,6 @@
          }
         // ---------------------------- clearAllMessages ------------------------
         function clearAllMessages(){
-            // debugger
             // console.log('clearAllMessages')
             // console.log(gPanos)
             gPanos.forEach(pano => {
@@ -293,7 +292,6 @@
         // Tests the input fields for the top level pano form.
         // Returns an object indicating which fields are valid, including whether all fields are valid
         function getFormValidation(panoId){  
-            // debugger         
             //   console.log("getFormValidation panoId: ", panoId)
             let pId = extractId(panoId)
             //   console.log(gPanos[pId])
@@ -306,7 +304,7 @@
             const camPosY = reAnyNum.test(gPanos[pId].elements.posy.value);
             const camPosZ = reAnyNum.test(gPanos[pId].elements.posz.value);
             const camPosNumValid = ( camPosX && camPosY && camPosZ );
-            const camPosEnabled = gPanos[pId].elements.camPosEnbabled.checked
+            const camPosEnabled = gPanos[pId].elements.camPosEnabled.checked
             const camPosTest = !camPosEnabled  || camPosNumValid;
 
             const imageFileValue = gPanos[pId].elements.inputFile.value.match(reAnyTitle)
@@ -337,7 +335,7 @@
                 } else {
                     valObject.name.value = ''
                 }
-                if (gPanos[pId].elements.camPosEnbabled.checked){
+                if (gPanos[pId].elements.camPosEnabled.checked){
                     valObject.camx.value = camPosXValue[0]
                     valObject.camy.value = camPosYValue[0]
                     valObject.camz.value = camPosZValue[0]
@@ -356,7 +354,6 @@
         // Create a copy of this input field and place below.
         // Reset the top input fields.
         function savePano(panoId) {
-            // debugger
             // console.log('savePano()', panoId);
             pId = extractId(panoId)
             // console.log('pId: ', pId)
@@ -430,220 +427,73 @@
         // Creates the html elements for a new pano, that was loaded from file
         function loadPano(panoObjects){
             console.log('loadPano', panoObjects)
-            const filePath = panoObjects.panoPath 
-            const parentDiv = document.querySelector('#pano_data')
-            let prevDiv, mainDiv
-            let newPanoId = gPanos.length, pId, divId
-            let prevId = 'pano-'+(newPanoId-1).toString()
+            const filePath = panoObjects.panoPath            
+            let newPanoId = gPanos.length
             console.log(panoObjects.data)
             const panos = Object.values(panoObjects.data)
             console.log('panos', panos, typeof panos, panos.length)
-            const oldPanosLength = gPanos.length-1
-            Object.keys(panos).forEach(key => {    
-                // debugger           
-                let pano = panos[key]
-                console.log('pano: ', pano)
-                // console.log('createPano');
-                pId = Number(pano.id)
-                newPanoId = (oldPanosLength + pId)// 
-                if (pId == 1){ // For the first one, populate the values in the New Pano Elements
-                   
-                    let newPano = gPanos[gPanos.length-1]
-                    newPano.elements.main.setAttribute('class', 'pano_a');
-                    newPano.elements.message.innerHTML = filePath
-                    newPano.elements.title.innerHTML = "<b>Pano "+newPanoId.toString()+"</b>"
-                    newPano.elements.addButton.value = "Save"
-                    newPano.elements.viewName.setAttribute('value', pano.name)
-                    newPano.elements.inputFile.setAttribute('value', pano.file)
-                    newPano.elements.posx.setAttribute('value', pano.x) 
-                    newPano.elements.posy.setAttribute('value', pano.y) 
-                    newPano.elements.posz.setAttribute('value', pano.z)
-                    newPano.elements.inputFile.setAttribute('onchange', 'input_file-'+newPanoId)
+            const panoBaseId = gPanos.length-1
+            let panoIdNum 
+            Object.values(panos).forEach(pano => { 
+                // debugger
+                panoIdNum = panoBaseId + Number(pano.id)
+                console.log('pano', pano)
+                // Populate New Pano with loaded values
+                //panoIdNum = Number(pano.id) + panoBaseId - 1
+                let curPano = gPanos[ panoIdNum -1 ]
+                if (panoIdNum %2 == 0){
+                    curPano.elements.main.setAttribute('class', 'pano_a')
                 } else {
-                   
-                    // Create a new Div, that will contain all the input fields.
-                    divId = 'pano-'+(newPanoId)               
-                    prevId = 'pano-'+(newPanoId-1).toString()               
-                    prevDiv = document.querySelector('#'+prevId)
-                    // mainDiv = divInserter( divId, parentDiv, prevDiv);
-                    mainDiv = divCreator(pId, parentDiv)
-                    if (Number(newPanoId)%2 == 0){
-                        mainDiv.setAttribute('class', 'pano_b');
-                    } else {
-                        mainDiv.setAttribute('class', 'pano_a');
-                    }
-                
-                    // Pano number           
-                    let panoTitle = document.createElement('span')
-                    panoTitle.setAttribute('id', 'pano_maker_title-'+newPanoId)
-                    panoTitle.setAttribute('class','pano_title')
-                    panoTitle.innerHTML = "<b>Pano "+newPanoId+"</b>" 
-                    mainDiv.appendChild(panoTitle)              
-
-                    //  Message Panel
-                    let message = document.createElement('span')
-                    message.setAttribute('id', 'pano_message-'+newPanoId)
-                    message.setAttribute('class', 'pano_message')
-                    message.innerHTML = filePath
-                    mainDiv.appendChild(message)
-                    
-                    // Save Button
-                    let addButton = document.createElement('input')
-                    addButton.setAttribute('type', 'button')
-                    addButton.setAttribute('id', 'add_button-'+newPanoId)
-                    addButton.setAttribute('class', 'save_button')
-                    addButton.setAttribute('value', 'Save' )
-                    addButton.setAttribute('onclick', 'savePano(this.id)' )
-                    mainDiv.appendChild(addButton)
-                        
-                    // Select a file
-                    let fileDiv = divCreator('file_div', mainDiv);
-                    let selFile = document.createElement('span')
-                    fileDiv.appendChild(selFile)
-                    selFile.innerHTML = '<b>Select an Image File: </b>'
-                    selFile.setAttribute('class', 'title_row')
-                    // input file
-                    let id = 'input_file-'+newPanoId  
-                    let imageInput = document.createElement('input')   
-                    imageInput.setAttribute('type', 'file')
-                    imageInput.setAttribute('name', 'pano'+newPanoId)
-                    imageInput.setAttribute('id', 'input_file-'+newPanoId)
-                    imageInput.setAttribute('class', 'browse_btn')
-                    imageInput.setAttribute('accept', '.jpg, .png')
-                    imageInput.setAttribute('onchange', 'duplicateCheck(this.id)')
-                    imageInput.setAttribute('oninput', 'displayThumbnail(this)')
-                    fileDiv.appendChild(imageInput)
-                    // image file thumbnail
-                    let imageThumb = document.createElement('img')
-                    imageThumb.setAttribute('id', 'image_thm-'+newPanoId)
-                    imageThumb.setAttribute('class', 'image_thm')
-                    fileDiv.appendChild(imageThumb)
-
-                    // View Name
-                    let nameDiv = divCreator('name_div', mainDiv);
-                    let paneSize = 40;
-                    // checkbox enable View Names
-                    let enableViewName = document.createElement('input')
-                    enableViewName.setAttribute('type', "checkbox")
-                    enableViewName.setAttribute('class', 'checkbox')
-                    enableViewName.setAttribute('id', 'view_name_enabled-'+newPanoId)
-                    enableViewName.setAttribute('checked', 'true')
-                    enableViewName.setAttribute('onclick', 'viewNamesEnable(this.id)')
-                    nameDiv.appendChild(enableViewName)
-                    // Label
-                    let viewNameLabel = document.createElement('span')
-                    viewNameLabel.setAttribute('class', 'title_row')
-                    viewNameLabel.innerHTML = 'View Name:'
-                    nameDiv.appendChild(viewNameLabel)
-                    // Input
-                    let viewNameInput = document.createElement('input')
-                    viewNameInput.setAttribute('type', 'text')
-                    viewNameInput.setAttribute('size', paneSize)
-                    viewNameInput.setAttribute('class', 'title_row')
-                    viewNameInput.setAttribute('id', 'view_name-'+newPanoId)
-                    viewNameInput.setAttribute('value', pano.name)
-                    viewNameInput.setAttribute('onchange', 'checkInput(this.id)')
-                    viewNameInput.setAttribute('oninput', 'duplicateCheck(this.id)')
-                    nameDiv.appendChild(viewNameInput)
-                
-                    // Camera Position
-                    let camposDiv = divCreator('campos_div', mainDiv);
-                    camposDiv.setAttribute('class', 'cam_position')
-                    // console.log('camposDiv ',camposDiv)
-                    paneSize = 20;
-                    // checkbox enable View Names
-                    let enableCamPos = document.createElement('input')
-                    enableCamPos.setAttribute('type', "checkbox")
-                    enableCamPos.setAttribute('class', 'checkbox')
-                    enableCamPos.setAttribute('id', 'cam_pos_enabled-'+newPanoId)
-                    enableCamPos.setAttribute('checked', 'true')
-                    enableCamPos.setAttribute('onclick', 'camPosEnable(this.id)')
-                    camposDiv.appendChild(enableCamPos)
-                    // Title
-                    let camPosTitle = document.createElement('span')
-                    camPosTitle.innerHTML = "Camera Position"
-                    camPosTitle.setAttribute('class', 'title_row')
-                    camposDiv.appendChild(camPosTitle)
-                    // pos x label
-                    let posxLabel = document.createElement('span')
-                    posxLabel.setAttribute('class', 'position_row')
-                    posxLabel.innerHTML = 'pos x:'
-                    camposDiv.appendChild(posxLabel)
-                    // pos x Input
-                    let posxInput = document.createElement('input')
-                    posxInput.setAttribute('type', 'number')
-                    posxInput.setAttribute('step', '0.1')
-                    posxInput.setAttribute('size', paneSize)
-                    posxInput.setAttribute('id', 'posx-'+newPanoId)
-                    posxInput.setAttribute('value', pano.x)
-                    posxInput.setAttribute('onchange', 'checkInput(this.id)')
-                    camposDiv.appendChild(posxInput)
-                    // pos y label
-                    let posyLabel = document.createElement('span')
-                    posyLabel.setAttribute('class', 'position_row')
-                    posyLabel.innerHTML = 'pos y:'
-                    camposDiv.appendChild(posyLabel)
-                    // pos y Input
-                    let posyInput = document.createElement('input')
-                    posyInput.setAttribute('type', 'number')
-                    posyInput.setAttribute('step', '0.1')
-                    posyInput.setAttribute('size', paneSize)
-                    posyInput.setAttribute('id', 'posy-'+newPanoId)
-                    posyInput.setAttribute('value', pano.y)
-                    posyInput.setAttribute('onchange', 'checkInput(this.id)')
-                    camposDiv.appendChild(posyInput)
-                    // pos z label
-                    let poszLabel = document.createElement('span')
-                    poszLabel.setAttribute('class', 'position_row')
-                    poszLabel.innerHTML = 'pos z:'
-                    camposDiv.appendChild(poszLabel)
-                    // pos z Input
-                    let poszInput = document.createElement('input')
-                    poszInput.setAttribute('type', 'number')
-                    poszInput.setAttribute('step', '0.1')
-                    poszInput.setAttribute('size', paneSize)
-                    poszInput.setAttribute('id', 'posz-'+newPanoId)
-                    poszInput.setAttribute('value', pano.z)
-                    poszInput.setAttribute('onchange', 'checkInput(this.id)')
-                    camposDiv.appendChild(poszInput)
-
-                    // Delete Button
-                    let deleteButton = document.createElement('input')
-                    deleteButton.setAttribute('type', 'button')
-                    deleteButton.setAttribute('id', 'delete_button-'+newPanoId)
-                    deleteButton.setAttribute('class', 'delete_button')
-                    deleteButton.setAttribute('value', 'Delete' )
-                    deleteButton.setAttribute('onclick', 'deletePano(this.id)' )
-                    camposDiv.appendChild(deleteButton)
-               
-                    // pano object {elements, values}
-                    let newPano = {
-                        elements: {  
-                            main: mainDiv, 
-                            title: panoTitle,   
-                            message: message,       
-                            addButton: addButton,
-                            deleteButton: deleteButton,
-                            inputFile: imageInput,
-                            viewName: viewNameInput,
-                            viewNameEnabled: enableViewName,                   
-                            camPosEnbabled: enableCamPos, 
-                            posx: posxInput,
-                            posy: posyInput,
-                            posz: poszInput
-                        },
-                        values:{}
-                    }
-
-                    gPanos.push(newPano);
+                    curPano.elements.main.setAttribute('class', 'pano_b');
                 }
+               
+                curPano.elements.message.innerHTML = filePath
+                curPano.elements.title.innerHTML = "<b>Pano "+pano.id+"</b>"
+                curPano.elements.addButton.value = "Save"
+                curPano.elements.viewName.setAttribute('value', pano.name)
+                curPano.elements.inputFile.setAttribute('value', pano.file)
+                curPano.elements.posx.setAttribute('value', pano.x) 
+                curPano.elements.posy.setAttribute('value', pano.y) 
+                curPano.elements.posz.setAttribute('value', pano.z)
+                curPano.elements.inputFile.setAttribute('onchange', 'input_file-'+newPanoId)
+                // Create new Pano                  
+                // pano object {elements, values}
+                let newPano = {
+                    elements: {  
+                        main: curPano.elements.main, 
+                        title: curPano.elements.title,   
+                        message: curPano.elements.message,       
+                        addButton: curPano.elements.addButton,
+                        deleteButton: curPano.elements.deleteButton,
+                        inputFile: curPano.elements.inputFile,
+                        viewName: curPano.elements.viewName,
+                        viewNameEnabled: curPano.elements.viewNameEnabled,                   
+                        camPosEnabled: curPano.elements.camPosEnabled, 
+                        posx: curPano.elements.posx,
+                        posy: curPano.elements.posy,
+                        posz: curPano.elements.posz
+                    },
+                    values:{}
+                }
+
+                // gPanos.push(newPano);
+          
+                // Create New Pano panel
+                createPano(gPanos.length)
             })
+
+            // Enable Make Panos button
+            const makePanoBtn = document.querySelector('#submit_button')
+            makePanoBtn.disabled = false
+            makePanoBtn.setAttribute('class', 'submit_button')
+            console.log(makePanoBtn)
+
         }
         // ----------------------------- duplicateCheck ----------------------------
         // Checks all the previously made panos to see if new pano is a duplicate.
         function duplicateCheck(elId){
             console.log('duplicateCheck ', elId)
-            debugger
+            // debugger
             // Get name of ID
             let elType = elId.match(/\w+/i)[0]
             // console.log('element type ', elType)
@@ -771,7 +621,7 @@
                 gPanos[curPanoId].elements.addButton.setAttribute('id', 'add_button-'+curPanoId)
                 gPanos[curPanoId].elements.deleteButton.setAttribute('id', 'delete_button-'+curPanoId)
                 gPanos[curPanoId].elements.inputFile.setAttribute('id', 'input_file-'+curPanoId)
-                gPanos[curPanoId].elements.camPosEnbabled.setAttribute('id', 'cam_pos_enabled-'+curPanoId)
+                gPanos[curPanoId].elements.camPosEnabled.setAttribute('id', 'cam_pos_enabled-'+curPanoId)
                 gPanos[curPanoId].elements.posx.setAttribute('id', 'posx-'+curPanoId)
                 gPanos[curPanoId].elements.posy.setAttribute('id', 'posy-'+curPanoId)
                 gPanos[curPanoId].elements.posz.setAttribute('id', 'posz-'+curPanoId)
@@ -850,8 +700,6 @@
            // Start by getting verified array of pano data.
             // let values = checkPanoValues();
             // values = {};
-
-            // debugger
 
             // Add the project data.
             let projectDataObject = {};
