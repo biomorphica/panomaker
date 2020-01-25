@@ -87,7 +87,7 @@
             imageInput.setAttribute('id', 'input_file-'+pId)
             imageInput.setAttribute('class', 'browse_btn')
             imageInput.setAttribute('accept', '.jpg, .png')
-            imageInput.setAttribute('onchange', 'duplicateCheck(this.id)')
+            // imageInput.setAttribute('onchange', 'duplicateCheck(this.id)')
             imageInput.setAttribute('oninput', 'displayThumbnail(this)')
             fileDiv.appendChild(imageInput)
             // image file thumbnail
@@ -435,7 +435,7 @@
             const panoBaseId = gPanos.length-1
             let panoIdNum 
             Object.values(panos).forEach(pano => { 
-                // debugger
+                //  debugger
                 panoIdNum = panoBaseId + Number(pano.id)
                 console.log('pano', pano)
                 // Populate New Pano with loaded values
@@ -449,7 +449,9 @@
                
                 curPano.elements.message.innerHTML = filePath
                 curPano.elements.title.innerHTML = "<b>Pano "+pano.id+"</b>"
-                curPano.elements.addButton.value = "Save"
+                // curPano.elements.addButton.value = "Save"
+                curPano.elements.addButton.setAttribute("hidden", true)
+                curPano.elements.deleteButton.style.display = "block"
                 curPano.elements.viewName.setAttribute('value', pano.name)
                 curPano.elements.inputFile.setAttribute('value', pano.file)
                 curPano.elements.posx.setAttribute('value', pano.x) 
@@ -505,7 +507,8 @@
             if (gPanos.length > 1){
                 for (let i=0; i<gPanos.length-1; i++){
                     if(elType == 'input_file'){                       
-                        if ((gPanos[i].elements.inputFile.value == elemVal) && (i+1 !== Number(pId))){
+                        if ((gPanos[i].elements.inputFile.value == elemVal) && 
+                        (gPanos[i].elements.inputFile.id !== elId)){
                             // console.log('Your Image File choice is the same as pano '+ (i+1).toString() )
                             messageEl.innerHTML = 'Your image file choice is the same as pano '+ (i+1).toString()
                             elemToTest.style.borderColor =  '#ff4400'
@@ -518,7 +521,8 @@
                         }
                     } else if (elType == 'view_name'){
                         console.log('view_name ', gPanos[i].elements.viewName.value, elemVal)
-                        if ( (gPanos[i].elements.viewName.value == elemVal) && (i+1 !== Number(pId)) ){
+                        if ( (gPanos[i].elements.viewName.value == elemVal) && 
+                        (gPanos[i].elements.viewName.id !== elId) ){
                             // console.log('Your View Name choice is the same in pano '+ (i+1).toString() )
                             messageEl.innerHTML = 'Your View Name  choice is the same as pano '+ (i+1).toString()
                             elemToTest.style.borderColor =  '#ff4400'
@@ -551,6 +555,7 @@
             // Clear message 
             const messageEl = document.querySelector('#pano_message-'+id)
             messageEl.innerHTML = ''
+            duplicateCheck(el.id)
         }
        // ----------------------------- populatePanoValues ----------------------------
        // Populate the pano.values with data from all the html elements
@@ -595,6 +600,7 @@
         // ----------------------------- deletePano ----------------------------
         let deletePano = function(panoId){
             // console.log('deletePano ', panoId)
+            debugger
             let dId = extractId(panoId)
             // console.log('dId: ', dId)
             // console.log('pano to be deleted: ' , gPanos[pId]);
@@ -603,7 +609,7 @@
             if (r == true){
                 // delete this html and object.
                 // console.log('gPanos.length:', gPanos.length, gPanos);
-                let m = gPanos[pId].elements.main;
+                let m = gPanos[dId].elements.main;
                 // console.log(m);
                 while (m.firstChild){
                     m.removeChild(m.firstChild);
