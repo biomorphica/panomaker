@@ -49,7 +49,8 @@
             const parentDiv = document.querySelector('#pano_data')
             const prevDiv = document.querySelector('#'+prevId)
             const mainDiv = divInserter( divId, parentDiv, prevDiv);
-            mainDiv.setAttribute("class", "pano_maker")   
+            mainDiv.setAttribute("class", "pano_maker")  
+            mainDiv.setAttribute('id', pId) 
 
             // Pano number           
             let panoTitle = document.createElement('span')
@@ -212,7 +213,6 @@
             // console.log(pano);
             checkInput(gPanos.length-1)
             
-            
         }   
         // ----------------------------  viewNamesEnable ------------------------ 
         // Checkbox enables (or disables) the View Name field
@@ -257,7 +257,7 @@
         function checkInput(panoId) {
             let pId = extractId(panoId)
         //   console.log('checkInput ', pId)
-            let val = getFormValidation(pId) 
+            let val = validateNewPano(pId) 
             let clear = false // Does not flag invalid fields (outline in red), only clears valid fields from being flagged.          
             flagInvalidFields(val, clear)
             let addButton =  gPanos[pId].elements.addButton
@@ -286,13 +286,51 @@
             gPanos.forEach(pano => {
                pano.elements.message.innerHTML = ''
             })
-         }
-
-        // ---------------------------- getFormValidation ------------------------
+        }
+        // ---------------------------- validateProjectData ------------------------
+        function validateProjectData(){
+            const author = document.querySelector("#authorName")
+            const project = document.querySelector("#projectName")
+            let valid = true
+            if (author.value == ""){
+                author.style.borderColor =  '#ff4400'
+                author.style.borderWidth = 'medium'
+                valid = false
+            } else {
+                author.style.borderColor = '#aaaaaa'
+                author.style.borderWidth = 'thin'    
+            }
+            if (project.value == ""){
+                project.style.borderColor =  '#ff4400'
+                project.style.borderWidth = 'medium'
+                valid = false
+            } else {
+                project.style.borderColor = '#aaaaaa'
+                project.style.borderWidth = 'thin'    
+            }
+            return valid
+        }
+        // ---------------------------- validateAllInputFiles ------------------------
+        function validateAllInputFiles(){
+            let valid = true
+            for (let i = 0; i < gPanos.length-1; i++){
+                let pano = gPanos[i]
+                if (pano.elements.inputFile.value){
+                    pano.elements.inputFile.style.borderColor = '#aaaaaa'
+                    pano.elements.inputFile.style.borderWidth = 'thin'  
+                } else {
+                    pano.elements.inputFile.style.borderColor = '#ff4400'
+                    pano.elements.inputFile.style.borderWidth = 'medium'
+                    valid = false  
+                }
+            }
+            return valid
+        }
+        // ---------------------------- validateNewPano ------------------------
         // Tests the input fields for the top level pano form.
         // Returns an object indicating which fields are valid, including whether all fields are valid
-        function getFormValidation(panoId){  
-            //   console.log("getFormValidation panoId: ", panoId)
+        function validateNewPano(panoId){  
+            //   console.log("validateNewPano panoId: ", panoId)
             let pId = extractId(panoId)
             //   console.log(gPanos[pId])
             const reAnyTitle = /[\w]+/i;
@@ -417,10 +455,9 @@
             } else { // Some fields were not valid
                 // Hilight fields in error
                 // console.log('pano '+pId+' has invalid fields')
-                let val = getFormValidation(pId)
+                let val = validateNewPano(pId)
                 flagInvalidFields(val, true)
                 // Throw error message
-
             }        
         }
         // ----------------------------- loadPano ----------------------------
@@ -457,7 +494,7 @@
                 curPano.elements.posx.setAttribute('value', pano.x) 
                 curPano.elements.posy.setAttribute('value', pano.y) 
                 curPano.elements.posz.setAttribute('value', pano.z)
-                curPano.elements.inputFile.setAttribute('onchange', 'input_file-'+newPanoId)
+                // curPano.elements.inputFile.setAttribute('onchange', 'input_file-'+newPanoId)
                 // Create new Pano                  
                 // pano object {elements, values}
                 let newPano = {
@@ -489,7 +526,6 @@
             makePanoBtn.disabled = false
             makePanoBtn.setAttribute('class', 'submit_button')
             console.log(makePanoBtn)
-
         }
         // ----------------------------- duplicateCheck ----------------------------
         // Checks all the previously made panos to see if new pano is a duplicate.
@@ -559,17 +595,29 @@
         }
        // ----------------------------- populatePanoValues ----------------------------
        // Populate the pano.values with data from all the html elements
-       function populatePanoValues(curPanoId){
-        //    console.log('populatePanoValues',curPanoId )
-        //    console.log('gPanos', gPanos)
-        gPanos.forEach(pano => {
-            pano.values.inputFile = pano.elements.inputFile.value
-            pano.values.viewName = pano.elements.viewName.value
-            pano.values.inputFile = pano.elements.inputFile.value
-            pano.values.posx = pano.elements.posx.value
-            pano.values.posy = pano.elements.posy.value
-            pano.values.posz = pano.elements.posz.value
-        })
+       function populatePanoValues(){
+            //    console.log('populatePanoValues')
+            //    console.log('gPanos', gPanos)
+            gPanos.forEach(pano => {
+                // File
+                pano.values.inputFile = file = removeFakePath(pano.elements.inputFile.value)
+                // Name
+                if (pano.elements.viewNameEnabled.value){
+                    pano.values.viewName = pano.elements.viewName.value
+                } else {
+                    pano.values.viewName = pano.elements.main.id
+                }               
+                // Camera Position
+                if (pano.elements.camPosEnabled.value){
+                    pano.values.posx = pano.elements.posx.value
+                    pano.values.posy = pano.elements.posy.value
+                    pano.values.posz = pano.elements.posz.value
+                } else {
+                    pano.values.posx = Number(pano.elements.main.id)
+                    pano.values.posy = 0
+                    pano.values.posz = 0
+                }                
+            })
        }
       
        // ----------------------------- flagInvalidFields ----------------------------
@@ -600,7 +648,7 @@
         // ----------------------------- deletePano ----------------------------
         let deletePano = function(panoId){
             // console.log('deletePano ', panoId)
-            debugger
+            // debugger
             let dId = extractId(panoId)
             // console.log('dId: ', dId)
             // console.log('pano to be deleted: ' , gPanos[pId]);
@@ -633,7 +681,6 @@
                 gPanos[curPanoId].elements.posz.setAttribute('id', 'posz-'+curPanoId)
                 gPanos[curPanoId].elements.viewName.setAttribute('id', 'view_name-'+curPanoId)
                 gPanos[curPanoId].elements.viewNameEnabled.setAttribute('id', 'view_name_enabled-'+curPanoId)
-            
             }
         }
         // ------------------------------ removeFakePath -------------------
@@ -650,81 +697,46 @@
          // Submit verified data to server.
          let submitData = function() {
             console.log('submitData');
-            // object list of all the project data that will be saved to the json file.
-            let projectData = {
-                projectName:{ id:"#projectName", value: document.querySelector('#projectName').value, type:"string" },
-                authorName:{ id:"#authorName", value: document.querySelector('#authorName').value, type:"string" }, 
-                // bNumbersVisible:{ id:"#numbers_vis", value: document.querySelector('#numbers_vis').click, type:"boolean" },
-                // bNamesVisible:{ id:"#names_vis", value: document.querySelector('#names_vis').click, type:"boolean" }, 
-                // bNumVisRollover:{ id:"#num_over", value: document.querySelector('#num_over').click, type:"boolean" } , 
-                // bNamVisRollover:{ id:"#names_over", value: document.querySelector('#names_over').click, type:"boolean" },
-                // firstPanoNum:{ id:"#first_pano", value: document.querySelector('#first_pano').value, type: "number" }, 
-                // firstTargetNum:{ id:"#first_target", value: document.querySelector('#first_target').value, type: "number" }, 
-                // bThumbnailsVisible:{ id:"#thumbnails_vis", value: document.querySelector('#thumbnails_vis').click, type: "boolean" }, 
-                // bThumbNamesVisible:{ id:"#thm_names_vis", value: document.querySelector('#thm_names_vis').click, type: "boolean" }, 
-                // bThumbNumbersVisible:{ id:"#thm_numbers_vis", value: document.querySelector('#thm_numbers_vis').click, type: "boolean" },
-                // bLogoVisible:{ id:"#logo_vis", value: document.querySelector('#logo_vis').click, type:"boolean" }, 
-                // logoFile:{ id:"#logo_input_file", value: document.querySelector('#logo_vis').value, type: "file"},
-                // bLogoFixed:{ id:"#logo_fixed", value: document.querySelector('#logo_fixed').click, type:"boolean" }, 
-                // logoDuration:{ id:"#logo_duration", value: document.querySelector('#logo_duration').value, type:"number" }, 
-                // bUseCamPostionData:{ id:"#use_cam_pos_data", value: document.querySelector('#use_cam_pos_data').click, type:"boolean" }
-            };
+            debugger
+            // Validate Project fields (Author and Project Name)
+            let validProjectData = validateProjectData()
+            let validInputFiles = validateAllInputFiles()
+            if ( validProjectData && validInputFiles ){
+                // object list of all the project data that will be saved to the json file.
+                let projectData = {
+                    projectName:{ id:"#projectName", value: document.querySelector('#projectName').value, type:"string" },
+                    authorName:{ id:"#authorName", value: document.querySelector('#authorName').value, type:"string" }, 
+                    // bNumbersVisible:{ id:"#numbers_vis", value: document.querySelector('#numbers_vis').click, type:"boolean" },
+                    // bNamesVisible:{ id:"#names_vis", value: document.querySelector('#names_vis').click, type:"boolean" }, 
+                    // bNumVisRollover:{ id:"#num_over", value: document.querySelector('#num_over').click, type:"boolean" } , 
+                    // bNamVisRollover:{ id:"#names_over", value: document.querySelector('#names_over').click, type:"boolean" },
+                    // firstPanoNum:{ id:"#first_pano", value: document.querySelector('#first_pano').value, type: "number" }, 
+                    // firstTargetNum:{ id:"#first_target", value: document.querySelector('#first_target').value, type: "number" }, 
+                    // bThumbnailsVisible:{ id:"#thumbnails_vis", value: document.querySelector('#thumbnails_vis').click, type: "boolean" }, 
+                    // bThumbNamesVisible:{ id:"#thm_names_vis", value: document.querySelector('#thm_names_vis').click, type: "boolean" }, 
+                    // bThumbNumbersVisible:{ id:"#thm_numbers_vis", value: document.querySelector('#thm_numbers_vis').click, type: "boolean" },
+                    // bLogoVisible:{ id:"#logo_vis", value: document.querySelector('#logo_vis').click, type:"boolean" }, 
+                    // logoFile:{ id:"#logo_input_file", value: document.querySelector('#logo_vis').value, type: "file"},
+                    // bLogoFixed:{ id:"#logo_fixed", value: document.querySelector('#logo_fixed').click, type:"boolean" }, 
+                    // logoDuration:{ id:"#logo_duration", value: document.querySelector('#logo_duration').value, type:"number" }, 
+                    // bUseCamPostionData:{ id:"#use_cam_pos_data", value: document.querySelector('#use_cam_pos_data').click, type:"boolean" }
+                };
 
-
-            // Save all html fields to the project Data Object. Test all the open fields for invalid entries.
-            // let projectFieldsValid = true;
-            // let projectDataKeys = Object.keys(projectData);
-            // for (const key of projectDataKeys) {
-            //     // console.log(key, projectData[key].type );
-            //     if (projectData[key].type == "string" ){
-            //         if (isFieldValid(projectData[key].id)){
-            //             projectData[key].value = document.querySelector(projectData[key].id).value;
-            //         }  else { projectFieldsValid = false; }
-            //     }
-            //     if (projectData[key].type == "number" ){
-            //         if (isFieldValid(projectData[key].id)){
-            //             let num = (document.querySelector(projectData[key].id).value);
-            //             if (num){  projectData[key].value = num; }
-            //         }  else { projectFieldsValid = false; }
-            //     }
-            //     if (projectData[key].type == "boolean" ){    
-            //         projectData[key].value = document.querySelector(projectData[key].id).checked.toString();
-            //     }
-            //     if (projectData[key].type == "file" ){  
-            //         let file =   document.querySelector(projectData[key].id).value;
-            //         if (file){
-            //             file = removeFakePath(file);
-            //         } else { file = null; }
-            //         projectData[key].value = file;
-            //     }
+                // Retrieve data from pano html fields and populate gPanos object.
+                populatePanoValues(); 
+            
+                let values = []
+                gPanos.forEach(pano => {
+                    values.push(pano.values)
+                })
+                console.log('values', values);
+                // console.log('gPanos', gPanos);
                
-           
-
-            // Retrieve data from pano html fields and populate gPanos object.
-            populatePanoValues(); 
-           // Create values object that will be passed into json file. 
-           // Start by getting verified array of pano data.
-            // let values = checkPanoValues();
-            // values = {};
-
-            // Add the project data.
-            let projectDataObject = {};
-            projectDataKeys = Object.keys(projectData);
-            // console.log('projectDataKeys', projectDataKeys);
-            for (const key of projectDataKeys) {
-                if ( projectData[key].value){
-                    projectDataObject[key] = projectData[key].value;
-                }
-            }     
-           
-            // console.log('values', values);
-            // console.log('gPanos', gPanos);
-            if ( values && projectFieldsValid ){
                 panoFinal = {}; // Object to be sent to server
                 
                 // Add the pano data.               
-                panoFinal['data'] = { panos: values, project: projectDataObject };
-                 console.log('panoFinal', panoFinal);
+                panoFinal['data'] = { panos: values, project: projectData };
+                console.log('panoFinal', panoFinal);
                 // prepare to send json to server
                 const options = {
                     method: 'POST',
@@ -741,10 +753,12 @@
                     console.log("response: ", data);
                 }
                 getApi();
-            } else {
-                alert('Some fields were left blank. Please attend to the highlighted areas.');
-                return;
+               
             }
+
+            
+
+
         }
         // ----------------------------- importCamData ----------------------------
         function importCamData(files){
@@ -790,7 +804,7 @@
             newElement.setAttribute('id', id);
             return newElement;
         }
-          // ----------------------------- extractId ----------------------------
+        // ----------------------------- extractId ----------------------------
         // extract the Id number at the end of the string inside panoId
         function extractId(panoId){
             if (!panoId){ panoId = gCurPano }
@@ -800,6 +814,13 @@
             pId = Number(pId)
             return pId
         } 
+        // ----------------------------- clearField ----------------------------
+        function clearField(el){
+            if (el.value){
+                el.style.borderColor = '#aaaaaa'
+                el.style.borderWidth = 'thin'    
+            }
+        }
         
    
     //  ----------------------------- MAIN ----------------------------    
@@ -807,8 +828,8 @@
       // Global Variables
       let gPanos = [];// List of all the panos to be used
       let gCurPano = 0;
-      let gbvaluesValid = false; 
+    //   let gbvaluesValid = false; 
     //   const reader = new FileReader()
     //   const inputCamData = document.querySelector('#import_button')
     //   inputCamData.addEventListener('change', imputCameraData())
-    createPano(0) 
+    createPano(0)

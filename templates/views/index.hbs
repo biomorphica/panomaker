@@ -13,8 +13,8 @@
           <!-- {{>header}}  -->
         </div>
         <div class="project_name">
-            <span>Author: <input type="text" class='field' id="authorName"></span>
-            <span class="project_labels">Project Name: <input type="text" class='field' id="projectName"> </span><br>
+            <span>Author: <input type="text" class='field' id="authorName" onchange="clearField(this)"></span>
+            <span class="project_labels">Project Name: <input type="text" class='field' id="projectName" onchange="clearField(this)"> </span><br>
             <span><input type="file" name="import_button" class="import_button" accept=".json, .txt" 
                 id="import_button" value="Import Camera Data" onchange="importCamData(this.files)"/>
             <label for="import_button">Import Camera Data</label></span>
